@@ -39,12 +39,6 @@ class SPBR  : public kvs::PointObject {
 
   //---------- METHODS ----------//
 
-  // UCHIDA 2019/03/31
-  // Brightness Adjustment
-  void   setFlagBrightnessAdjustment(int flag);
-  bool   m_flagBrightnessAdjustment;
-  bool   isBrightnessAdjustment ( void ) { return m_flagBrightnessAdjustment;}
-
   // Camera control
   void   setCameraPosition ( double Ex , double Ey , double Ez  );
   void   setLookAt         ( double LAx, double LAy, double LAz );

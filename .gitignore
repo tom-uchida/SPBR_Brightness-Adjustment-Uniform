@@ -1,5 +1,4 @@
 CONVERT2BINARY/
-DOC/
 PLY_DATA/
 PLY_SUPPORT/
 SPBR_DATA/
@@ -13,3 +12,5 @@ spbr
 spbr_ex
 opbr
 Makefile*
+*.sh
+*.org

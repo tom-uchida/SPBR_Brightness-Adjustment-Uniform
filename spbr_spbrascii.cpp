@@ -167,13 +167,6 @@ SPBR::readHeader_and_countParticles ( void )
           // Do nothing (to be considered in readPointData())
         }  else
         //=================================================================//
-        // UCHIDA 2019/3/31
-        //----- Brightness Adjustment ----- 
-        if ( !strncmp( buf, BRIGHTNESS_ADJUSTMENT, strlen(BRIGHTNESS_ADJUSTMENT) ) ) { 
-            int flag;
-            sscanf ( buf, "%s %d", dummy, &flag );
-            setFlagBrightnessAdjustment( flag );
-        } else
         //----- Point size (for OPBR) -----
         if ( !strncmp( buf, POINT_SIZE_COMMAND, strlen(POINT_SIZE_COMMAND) ) ) { 
             unsigned int point_size;

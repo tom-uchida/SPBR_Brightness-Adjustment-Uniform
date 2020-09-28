@@ -186,20 +186,17 @@ inline void setWindowTitle ( const char* title,
 
 
 //-----
-inline void drawFPS( SPBR*               spbr_engine,   
+inline void drawFPS( SPBR*              spbr_engine,   
                     kvs::glut::Screen*  screen      ) 
 {
+  kvs::RGBColor textcolor( 255 - spbr_engine->bg_Rb() ,
+                           255 - spbr_engine->bg_Gb() ,
+                           255 - spbr_engine->bg_Bb()  );
 
-  FPSLabel* fps_label = new FPSLabel ( screen );
-  if( spbr_engine->isFPSDisplayed()) {
-    kvs::RGBColor textcolor( 255 - spbr_engine->bg_Rb() ,
-			     255 - spbr_engine->bg_Gb() ,
-			     255 - spbr_engine->bg_Bb()  );
-    fps_label->setTextColor(textcolor);
-    fps_label->show();
-  }
+  FPSLabel* label_p = new FPSLabel (screen, textcolor);
+  label_p->show();
 
-}// drawFPS()
+}// drawFPSLabel()
 
 
 //-----

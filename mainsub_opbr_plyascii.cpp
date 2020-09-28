@@ -155,16 +155,9 @@ int mainsub_opbr_plyascii ( int argc, char** argv )
   key.displayMenu();  
 
   // FPS count
-  /***** //TANAKA
-  FPSLabel fpslabel( &screen );
-  if( spbr_engine->isFPSDisplayed()) {
-    kvs::RGBColor textcolor( 255 - spbr_engine->bg_Rb() ,
-			     255 - spbr_engine->bg_Gb() ,
-			     255 - spbr_engine->bg_Bb()  );
-    fpslabel.setTextColor(textcolor);
-    fpslabel.show();
-  }
-  *****/
+  // Draw FPS count inside the view window
+  //  Revise and moved here to use kvs::Label
+  drawFPS ( spbr_engine, &screen );//draw FPSLabel
   
   // Start
   return( app.run() );

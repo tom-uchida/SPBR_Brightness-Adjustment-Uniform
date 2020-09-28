@@ -20,14 +20,14 @@ inline kvs::LineObject* WireframeBox ( const kvs::Vector3d& min  = kvs::Vector3d
 {
   // coords
   kvs::Real32 coords[24] = {  
-                             min.x(), min.y(), min.z(), // v0
-                             max.x(), min.y(), min.z(), // v1
-                             max.x(), max.y(), min.z(), // v2
-                             min.x(), max.y(), min.z(), // v3  
-                             min.x(), min.y(), max.z(), // v4
-                             max.x(), min.y(), max.z(), // v5
-                             max.x(), max.y(), max.z(), // v6
-                             min.x(), max.y(), max.z()  
+			    (kvs::Real32)min.x(), (kvs::Real32)min.y(), (kvs::Real32)min.z(), // v0
+                            (kvs::Real32)max.x(), (kvs::Real32)min.y(), (kvs::Real32)min.z(), // v1
+                            (kvs::Real32)max.x(), (kvs::Real32)max.y(), (kvs::Real32)min.z(), // v2
+                            (kvs::Real32)min.x(), (kvs::Real32)max.y(), (kvs::Real32)min.z(), // v3  
+                            (kvs::Real32)min.x(), (kvs::Real32)min.y(), (kvs::Real32)max.z(), // v4
+                            (kvs::Real32)max.x(), (kvs::Real32)min.y(), (kvs::Real32)max.z(), // v5
+                            (kvs::Real32)max.x(), (kvs::Real32)max.y(), (kvs::Real32)max.z(), // v6
+                            (kvs::Real32)min.x(), (kvs::Real32)max.y(), (kvs::Real32)max.z()  // v7
                            }; 
 
   // lines

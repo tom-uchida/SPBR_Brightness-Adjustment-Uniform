@@ -5,36 +5,54 @@
 #if !defined  FPS_COUNT_HH
 #define       FPS_COUNT_HH
 
-#include <kvs/glut/Label>
+#include <kvs/Label>
 
-#include <kvs/Version> //KVS2
-#include <sstream> //KVS2
+#include <kvs/Version> 
+#include <sstream> 
 
-#if KVS_VERSION_MAJOR == 2
-  #include <kvs/Scene> //KVS2
-  #include <kvs/RendererManager> //KVS2
-  #include <kvs/RendererBase> //KVS2
-#endif
+#include <kvs/Scene> 
+#include <kvs/RendererManager> 
+#include <kvs/RendererBase> 
 
+#include <kvs/glut/Screen> //TANAKA
 
-class FPSLabel : public kvs::glut::Label
+const int FPS_MARGINE   = 10;
+const int FPS_FONT_SIZE = 26;
+
+//---------------------------------------//
+class FPSLabel : public kvs::Label
+//---------------------------------------//
 {
  public:
 
- FPSLabel( kvs::ScreenBase* screen ):
-  kvs::glut::Label( screen )
-    {
-      setMargin( 10 );
-    }
+  FPSLabel( kvs::glut::Screen* screen , kvs::RGBColor textcolor ):
+  kvs::Label( screen )
+  {
+    // Preparation
+    setScene( screen->scene() );
+
+    // Margine
+    setMargin( FPS_MARGINE );
+
+    // Font 
+    kvs::Font font;
+
+    //... (1) Font size
+    font.setSize( FPS_FONT_SIZE );
+
+    //... (2) Font color
+    // font.setColor( kvs::RGBColor::Black() );
+    font.setColor(textcolor);
+
+    // Finalization
+     setFont( font );
+  }
 
   void screenUpdated( void )
   {
-#if KVS_VERSION_MAJOR == 1
-    const kvs::RendererBase* renderer = screen()->rendererManager()->renderer();//KVS1
-#elif KVS_VERSION_MAJOR == 2
-    const kvs::RendererBase* renderer = static_cast<kvs::glut::Screen*>( screen() )->scene()->rendererManager()->renderer();//KVS2
-#endif
+    //    setText( "FPS: %.2lf", scene()->renderer( "Renderer" )->timer().fps() );
 
+    const kvs::RendererBase* renderer = static_cast<kvs::glut::Screen*>( screen() )->scene()->rendererManager()->renderer();//KVS2
     std::stringstream fps;
     fps << std::setprecision(4) << renderer->timer().fps();
     setText( std::string( "fps: " + fps.str() ).c_str() );

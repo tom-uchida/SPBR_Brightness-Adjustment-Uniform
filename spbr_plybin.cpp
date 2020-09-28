@@ -319,13 +319,6 @@ SPBR::read_SPBR_ParameterFile_Binary( const char* filename )
 	
       // Command
       if(buf[1] == '/') { 
-        // UCHIDA 2019/3/31
-        //----- Brightness Adjustment ----- 
-        if ( !strncmp( buf, BRIGHTNESS_ADJUSTMENT, strlen(BRIGHTNESS_ADJUSTMENT) ) ) { 
-            int flag;
-            sscanf ( buf, "%s %d", dummy, &flag );
-            setFlagBrightnessAdjustment( flag );
-        } else
         //----- Origin ----- [OK]
         if ( !strncmp( buf, ORIGIN_COMMAND, strlen(ORIGIN_COMMAND) ) ) { 
           double Ox, Oy, Oz ;

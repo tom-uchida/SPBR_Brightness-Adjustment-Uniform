@@ -6,22 +6,6 @@
 
 const double MOUSE_MIN_SPEED = 0.01 ;
 
-
-// UCHIDA 2019/3/31
-//-----
-void
-SPBR::setFlagBrightnessAdjustment(int flag) {
-  if ( flag ) { 
-    m_flagBrightnessAdjustment = true;  
-    std::cout << "** Adjust brightness of the image." << std::endl;
-
-  } else { 
-    m_flagBrightnessAdjustment = false;  
-    std::cout << "** Do not adjust brightness." << std::endl;
-  }
-}
-
-
 //-----
 void 
 SPBR::setCameraPosition ( double Ex, double Ey, double Ez )

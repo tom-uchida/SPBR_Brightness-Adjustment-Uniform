@@ -31,15 +31,6 @@
 
 #include "mainfn_utility.h"
 
-// UCHIDA 2019/03/31
-// Prototype declaration
-int mainsub_brightness_adjustment(
-    kvs::glut::Application*             app,
-    int                                 argc,
-    char**                              argv,
-    SPBR*                               spbr_engine,
-    kvs::PointObject*                   object,
-    BrightnessAdjustment::FILE_FORMAT4BA file_format );
 
 //#define DEBUG_MAIN
 
@@ -91,18 +82,6 @@ int mainsub_spbr_spbrascii ( int argc, char** argv )
 #endif
 
   //===== END OF CREATING THE POINT OBJECT =====//
-
-    // UCHIDA 2019/03/31
-    // Adjust brightness
-    if ( spbr_engine->isBrightnessAdjustment() ) {
-        return mainsub_brightness_adjustment(
-                /* kvs::glut::Application*  */  &app, 
-                /* int                      */  argc, 
-                /* char**                   */  argv, 
-                /* SPBR*                    */  spbr_engine, 
-                /* kvs::PointObject*        */  object,
-                /* FILE_FORMAT4BA           */  BrightnessAdjustment::SPBR_ASCII4BA );
-    }
 
 #if KVS_VERSION_MAJOR == 1
   kvs::glew::rits::ParticleBasedRenderer* renderer = new kvs::glew::rits::ParticleBasedRenderer();//KVS1
@@ -189,9 +168,6 @@ int mainsub_spbr_spbrascii ( int argc, char** argv )
   // Set window title
   setWindowTitle ( SPBR_WINDOW_TITLE, argv[1], &screen ) ; 
 
-  // Draw FPS count inside the view window
-  drawFPS ( spbr_engine, &screen );
-
   // Add events to the screen
   InitializeEvent  init;
   KeyPressEvent    key;
@@ -204,6 +180,10 @@ int mainsub_spbr_spbrascii ( int argc, char** argv )
 
   // Create and show the window
   screen.show();
+
+  // Draw FPS count inside the view window
+  //  Revise and moved here to use kvs::Label
+  drawFPS ( spbr_engine, &screen );//draw FPSLabel
 
   // Start
   return( app.run() );
