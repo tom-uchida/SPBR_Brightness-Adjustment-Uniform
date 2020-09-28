@@ -21,4 +21,4 @@ $ spbr_ex input.ply
 ```
 
 <!-- ## Demo movie
-![demo](resources/demo.gif) --># SPBR_Brightness-Adjustment
+![demo](resources/demo.gif) -->
