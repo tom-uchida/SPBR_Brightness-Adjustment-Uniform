@@ -31,8 +31,17 @@
 
 #include "mainfn_utility.h"
 
-
 //#define DEBUG_MAIN
+
+// UCHIDA 2020/09/29
+// Prototype declaration
+int mainsub_brightness_adjustment(
+    kvs::glut::Application*             app,
+    int                                 argc,
+    char**                              argv,
+    SPBR*                               spbr_engine,
+    kvs::PointObject*                   object,
+    BrightnessAdjustment::FILE_FORMAT4BA file_format );
 
 //-----
 int mainsub_spbr_spbrascii ( int argc, char** argv )
@@ -82,6 +91,18 @@ int mainsub_spbr_spbrascii ( int argc, char** argv )
 #endif
 
   //===== END OF CREATING THE POINT OBJECT =====//
+
+    // UCHIDA 2020/09/29
+    // Adjust brightness
+    if ( spbr_engine->isBrightnessAdjustment() ) {
+        return mainsub_brightness_adjustment(
+                /* kvs::glut::Application*  */  &app, 
+                /* int                      */  argc, 
+                /* char**                   */  argv, 
+                /* SPBR*                    */  spbr_engine, 
+                /* kvs::PointObject*        */  object,
+                /* FILE_FORMAT4BA           */  BrightnessAdjustment::SPBR_ASCII4BA );
+    }
 
 #if KVS_VERSION_MAJOR == 1
   kvs::glew::rits::ParticleBasedRenderer* renderer = new kvs::glew::rits::ParticleBasedRenderer();//KVS1

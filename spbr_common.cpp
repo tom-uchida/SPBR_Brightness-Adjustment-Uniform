@@ -610,3 +610,16 @@ void SPBR::setMouseZoomSpeed ( double mouse_zoom_speed ) //ZOOMSPEED
   if( m_mouse_zoom_speed < MOUSE_MIN_SPEED ) { m_mouse_zoom_speed = MOUSE_MIN_SPEED; }
 }
 
+// UCHIDA 2020/09/29
+//-----
+void
+SPBR::setFlagBrightnessAdjustment( int flag ) {
+  if ( flag ) { 
+    m_flagBrightnessAdjustment = true;  
+    std::cout << "** Adjust brightness of the image." << std::endl;
+
+  } else { 
+    m_flagBrightnessAdjustment = false;  
+    std::cout << "** Do not adjust brightness of the image." << std::endl;
+  }
+}

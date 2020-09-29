@@ -253,11 +253,11 @@ void BrightnessAdjustment::adjustBrightness( const std::string filename )
 
 inline void BrightnessAdjustment::displayMessage()
 {
-    std::cout << "\n" << std::endl;
-    std::cout << BA_TITLE                       << std::endl;
-    std::cout << "           "  << BA_VERSION   << std::endl;
-    std::cout << "           " << BA_DATE      << std::endl;
-    std::cout << "         "    << BA_AUTHOR    << "\n" << std::endl;
+    std::cout << "\n\n";
+    std::cout << BA_TITLE                 << std::endl;
+    std::cout << "           " << BA_DATE << std::endl;
+    std::cout << "         " << BA_AUTHOR << std::endl;
+    std::cout << "\n";
 } // End displayMessage()
 
 int BrightnessAdjustment::calcNumOfPixelsNonBGColor( const kvs::ColorImage& color_image )

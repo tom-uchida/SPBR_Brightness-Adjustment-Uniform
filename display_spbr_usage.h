@@ -36,6 +36,7 @@ inline void displaySPBRCommands ( std::ostream& out )
     out << "     * Rotation (Set body-coord base vectors in world coord.)" << std::endl;
     out << "  #/BGColorRGBByte (uByte r) (uByte g) (uByte b)" << std::endl;
     out << "  #/BoundingBox xmin ymin zmin  xmax ymax zmax "  << std::endl;
+    out << "  #/BrightnessAdjustment 1 or 0 (default is 0)" << std::endl; // UCHIDA 2020/09/29
     out << "  #/CameraAngleByAxis axis_name" << std::endl;
     out << "     * axis_name: +X, +Y, +Z, -X, -Y, -Z" << std::endl;
     out << "  #/CameraFar 1 or 0  (default: 0)" << std::endl;

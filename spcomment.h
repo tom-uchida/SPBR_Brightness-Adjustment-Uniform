@@ -152,5 +152,10 @@ const char CAMERA_OBJECT_COMMAND[] = "#/CameraObject";
 ////shrewd
 
 
+// UCHIDA 2020/09/29
+// #/BrightnessAdjustment 1 or 0 (default: 0)
+const char BRIGHTNESS_ADJUSTMENT[] = "#/BrightnessAdjustment"; 
+
+
 // end of spcomment.h
 #endif

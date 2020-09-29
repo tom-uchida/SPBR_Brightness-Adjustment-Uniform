@@ -41,6 +41,70 @@
 
 const kvs::Vector3f DEFAULT_LIGHT_POSITION (12.0, 12.0, 12.0) ;
 
+// UCHIDA 2020/09/29
+#include <kvs/TimerEventListener>
+#include <kvs/glut/Timer>
+#include "brightness_adjustment.h"
+
+//------------------------------------------------------------//
+class TimerEvent : public kvs::TimerEventListener {
+//------------------------------------------------------------//
+private:
+    const int 			  m_num_of_snapshots; // LR="original" & LR="1"
+    int     			  m_argc;
+    char**  			  m_argv;
+    size_t  			  m_repeat_level;
+    std::string			  m_filename;
+    kvs::Scene* 		  m_scene;
+    SPBR*				  m_spbr_engine;
+    BrightnessAdjustment* m_ba;
+
+public:
+    // Constructor
+    TimerEvent( int                     msec, 
+                BrightnessAdjustment*   ba,
+                int 			        argc,
+                char**			        argv,
+                kvs::Scene* 			scene,
+                SPBR* 					spbr_engine,
+                const int 				original_repeat_level ) : 
+        kvs::TimerEventListener( msec ),
+        m_num_of_snapshots( 2 ),
+        m_argc( argc ),
+        m_argv( argv ),
+        m_repeat_level( original_repeat_level ),
+        m_scene( scene ),
+        m_spbr_engine( spbr_engine ),
+        m_ba( ba )
+    {
+        // Get filename for snapshots
+        SingleInputFile* m_sif = SingleInputFile::GetInstance();
+        char m_filename_tmp[256];
+        m_sif->GetNameBody( m_filename_tmp );
+        m_filename = m_filename_tmp;
+    } // End constroctor
+
+    void update( kvs::TimeEvent* event ) {
+        if ( m_ba->getSnapshotCounter() < m_num_of_snapshots ) {
+            m_ba->SnapshotImage( m_scene, m_filename, m_repeat_level );
+
+            if ( m_ba->getSnapshotCounter() == 1 ) {
+                m_repeat_level = 1;
+                std::cout << "** Forcibly, repeat level is set to \"1\".\n" << std::endl;
+                m_ba->ReplaceObject( m_scene, m_argc, m_argv, m_spbr_engine, m_repeat_level);
+                std::cout << "\n** Replaced object and renderer." << std::endl;
+
+            } else if ( m_ba->getSnapshotCounter() == 2 ) {
+                std::cout << "\n** Snapshot succeeded."       << std::endl;
+                std::cout << "** SPBR ended successfully."  << std::endl;
+            } // end if
+
+        } else {
+            m_ba->adjustBrightness( m_filename );
+            exit(0);
+        } // end if
+    } // End update()
+}; // End TimerEvent class
 
 //------------------------------------------------------------//
 class InitializeEvent : public kvs::InitializeEventListener {
@@ -162,7 +226,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			  // const kvs::Vector3f rotation(OL, 0, 0);
 			  //// kvs::ObjectManager* object_manager = static_cast<kvs::glut::Screen*>(screen())->scene()->objectManager();
 			  //// object_manager->object()->multiplyXform(kvs::Xform::Translation(rotation));//Vector3
-			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ƒJƒƒ‰‚ÌXform‚ğXV
+			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xformï¿½ï¿½ï¿½Xï¿½V
 			  // screen()->redraw();
 			  // ///////////////////////////
 		   //}
@@ -205,7 +269,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			  // const kvs::Vector3f rotation(OR, 0, 0);
 			  //// kvs::ObjectManager* object_manager = static_cast<kvs::glut::Screen*>(screen())->scene()->objectManager();
 			  //// object_manager->object()->multiplyXform(kvs::Xform::Translation(rotation));//Vector3
-			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ƒJƒƒ‰‚ÌXform‚ğXV
+			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xformï¿½ï¿½ï¿½Xï¿½V
 			  // screen()->redraw();
 			  // //// x += 0.001;
 			  // ////////////////////////
@@ -248,7 +312,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			  // //kvs::ObjectManager* object_manager = static_cast<kvs::glut::Screen*>(screen())->scene()->objectManager();
 			  // //object_manager->object()->multiplyXform(kvs::Xform::Rotation(rotation));//Matrix
 			  // //object_manager->object()->multiplyXform(kvs::Xform::Translation(rotation));//Vector3
-			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ƒJƒƒ‰‚ÌXform‚ğXV
+			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xformï¿½ï¿½ï¿½Xï¿½V
 			  // screen()->redraw();
 			  // //U += 0.001f;
 			  // ////////////////////////////////////
@@ -291,7 +355,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			  // //kvs::ObjectManager* object_manager = static_cast<kvs::glut::Screen*>(screen())->scene()->objectManager();
 			  // // object_manager->object()->multiplyXform(kvs::Xform::Rotation(rotation));//Matrix
 			  // //object_manager->object()->multiplyXform(kvs::Xform::Translation(rotation));//Vector3
-			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ƒJƒƒ‰‚ÌXform‚ğXV
+			  // Camera_n->multiplyXform(kvs::Xform::Translation(kvs::Vec3(rotation)));//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xformï¿½ï¿½ï¿½Xï¿½V
 			  // screen()->redraw();
 			  // /////////////////////////////////////////////////
 		   //}
@@ -424,7 +488,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   ///////////////////////////////
 		   }
 		   else {
-			   ///////ƒJƒƒ‰‰ñ“]
+			   ///////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4 || camera_angle == 5) {//Z
 				   RY = kvs::Mat3::RotationY(deg);
 			   }
@@ -456,7 +520,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   ////////////////////////////////
 		   }
 		   else {
-			   //////////////////////ƒJƒƒ‰‰ñ“]
+			   //////////////////////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4 || camera_angle == 5) {//Z
 				   RY = kvs::Mat3::RotationY(deg_1);
 			   }
@@ -489,7 +553,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   /////////////////////////////////////////
 		   }
 		   else {
-			   //////////////////////ƒJƒƒ‰‰ñ“]
+			   //////////////////////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4) {//Z
 				   RX = kvs::Mat3::RotationX(deg);
 			   }
@@ -522,7 +586,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   /////////////////////
 		   }
 		   else {
-			   ////////////////ƒJƒƒ‰‰ñ“]
+			   ////////////////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4) {//Z
 				   RX = kvs::Mat3::RotationX(deg_1);
 			   }
@@ -555,7 +619,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   ///////////////////
 		   }
 		   else {
-			   /////////ƒJƒƒ‰‰ñ“]
+			   /////////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4 || camera_angle == 5) {//Z
 				   RZ = kvs::Mat3::RotationZ(deg);
 			   }
@@ -588,7 +652,7 @@ class KeyPressEvent : public kvs::KeyPressEventListener
 			   ////////////////////
 		   }
 		   else {
-			   /////////ƒJƒƒ‰‰ñ“]
+			   /////////ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
 			   if (camera_angle == 4 || camera_angle == 5) {//Z
 				   RZ = kvs::Mat3::RotationZ(deg_1);
 			   }

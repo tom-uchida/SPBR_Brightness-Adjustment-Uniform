@@ -389,11 +389,20 @@ SPBR::readHeader_Binary()
           flag_is_end_header_read = true ;
           break; 
         } else
+
+        // UCHIDA 2020/09/29
+        //----- Brightness Adjustment -----//
+        if ( !strncmp( buf, BRIGHTNESS_ADJUSTMENT, strlen(BRIGHTNESS_ADJUSTMENT) ) ) { 
+            int flag;
+            sscanf ( buf, "%s %d", dummy, &flag );
+            setFlagBrightnessAdjustment( flag );
+        } else
+
         //----------------------- Unknown command
         {
 		// Do nothing
         }
-
+        
       } // if(buf[1] == '/')
 	
     } // if( buf[0] == '#' ) 

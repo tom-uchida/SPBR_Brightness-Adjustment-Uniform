@@ -602,6 +602,15 @@ SPBR::read_SPBR_ParameterFile( const char* filename )
         if ( !strncmp ( buf, END_HEADER_COMMAND, strlen(END_HEADER_COMMAND) ) ) {
           break; 
         } else
+
+        // UCHIDA 2020/09/29
+        //----- Brightness Adjustment -----//
+        if ( !strncmp( buf, BRIGHTNESS_ADJUSTMENT, strlen(BRIGHTNESS_ADJUSTMENT) ) ) {
+            int flag;
+            sscanf ( buf, "%s %d", dummy, &flag );
+            setFlagBrightnessAdjustment( flag );
+        } else
+
         //----------------------- Unknown command
         {
 		// Do nothing

@@ -391,13 +391,21 @@ SPBR::readHeader_and_countParticles ( void )
           }
 
         } else 
+        
+        // UCHIDA 2020/09/29
+        //----- Brightness Adjustment -----//
+        if ( !strncmp( buf, BRIGHTNESS_ADJUSTMENT, strlen(BRIGHTNESS_ADJUSTMENT) ) ) { 
+            int flag;
+            sscanf ( buf, "%s %d", dummy, &flag );
+            setFlagBrightnessAdjustment( flag );
+        } else
+
         //-----------------------
         {
-	  std::cerr << "!!! WARNING (in reading the header):\n    Unknown command \"" << buf << "\" ";
-	  std::cerr << "is ignored. " << std::endl;
-	  //          exit(1);
-	}
-
+            std::cerr << "!!! WARNING (in reading the header):\n    Unknown command \"" << buf << "\" ";
+            std::cerr << "is ignored. " << std::endl;
+	        //          exit(1);
+        }
 
       } // if(buf[1] == '/')  
       else {

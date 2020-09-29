@@ -1,13 +1,13 @@
-## SPBR_Brightness-Adjustment
+# SPBR_Brightness-Adjustment
 
-### Prerequisites
+## Prerequisites
 - KVS: 2.9.0
 - SPBR: beta-19a
 
-### New Command
+## New Command
 `#/BrightnessAdjustment 1 or 0 (default: 0)`
 
-### Usage
+## Usage
 `$ spbr_ex input.spbr`
 
 or

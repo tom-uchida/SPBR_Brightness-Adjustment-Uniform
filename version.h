@@ -14,7 +14,7 @@ const char OPBR_APP_TITLE    [] = "===== Opaque Point-based Renderer (OPBR) ====
 const char SOPBR_VERSION [] = "Version beta-19a";
 
 //----- DATE
-const char DATE          [] = "2020/05/10 (Corona GW Version)";
+const char DATE          [] = "2020/09/30 (Brightness Adjustment Version)";
 
 //----- AUTHOR and INSTITUTE
 const char AUTHOR       [] = "      Satoshi Tanaka and Kyoko Hasegawa";
@@ -23,6 +23,12 @@ const char INSTITUTE    [] = "           Ritsumeikan University";
 //----- WINDOW TITLE
 const char SPBR_WINDOW_TITLE   []   = "SPBR version beta-19a";
 const char OPBR_WINDOW_TITLE   []   = "OPBR version beta-19a";
+
+// UCHIDA 2020/09/30
+//----- Brightness Adjustment
+const char BA_TITLE   [] = "===== Brightness Adjustment =====";
+const char BA_DATE    [] = "2020/09/30";
+const char BA_AUTHOR  [] = "Tomomasa Uchida";
 
 #endif 
 // end of version.h
