@@ -1,7 +1,7 @@
 //////////////////////////////////////////
 //   @file   brightness_adjustment.cpp
 //   @author Tomomasa Uchida
-//   @date   2019/03/15
+//   @date   2020/09/30
 //////////////////////////////////////////
 
 #include <kvs/glut/Application>
@@ -35,87 +35,77 @@
 #include "version.h"
 #include <sstream>
 
-BrightnessAdjustment::BrightnessAdjustment():
-    m_snapshot_counter( 0 ),
-    m_ratio_of_reference_section( 0.01f ),
-    m_parameter_interval( 0.01f )
-{
-    // Message
-    std::cout << "\n\n** BrightnessAdjustment constructor is called.\n"  << std::endl;
-} // End constructor
-
-BrightnessAdjustment::BrightnessAdjustment(FILE_FORMAT4BA file_format):
+BrightnessAdjustment::BrightnessAdjustment( FILE_FORMAT4BA file_format ):
     m_file_format( file_format ),
     m_snapshot_counter( 0 ),
     m_ratio_of_reference_section( 0.01f ),
     m_parameter_interval( 0.01f )
 {
     // Message
-    std::cout << "\n\n** BrightnessAdjustment constructor is called."  << std::endl;
+    std::cout << "\n*** BrightnessAdjustment constructor is called." << std::endl;
 
+    // Display the file format of the input data
     if ( m_file_format == SPBR_ASCII4BA )
-        std::cout << "**  FILE_FORMAT : SPBR_ASCII"  << "\n" << std::endl;
+        std::cout << "*** (FILE_FORMAT: SPBR_ASCII)\n"  << std::endl;
     else if ( m_file_format == SPBR_BINARY4BA )
-        std::cout << "**  FILE_FORMAT : SPBR_BINARY" << "\n" << std::endl;
+        std::cout << "*** (FILE_FORMAT: SPBR_BINARY)\n" << std::endl;
     else if ( m_file_format == PLY_ASCII4BA )
-        std::cout << "**  FILE_FORMAT : PLY_ASCII"   << "\n" << std::endl;
+        std::cout << "*** (FILE_FORMAT: PLY_ASCII)\n"   << std::endl;
     else if ( m_file_format == PLY_BINARY4BA )
-        std::cout << "**  FILE_FORMAT : PLY_BINARY"  << "\n" << std::endl;
+        std::cout << "*** (FILE_FORMAT: PLY_BINARY)\n"  << std::endl;
 } // End constructor
 
-void BrightnessAdjustment::RegisterObject( kvs::Scene* scene, int argc, char** argv, SPBR* spbr_engine, const size_t LR )
+void BrightnessAdjustment::RegisterObject( kvs::Scene* scene, int argc, char** argv, SPBR* spbr_engine, const size_t repeat_level )
 {
-    scene->registerObject( CreateObject(argc, argv), CreateRenderer(spbr_engine, LR) );
+    scene->registerObject( CreateObject( argc, argv ), CreateRenderer( spbr_engine, repeat_level ) );
 } // End RegisterObject()
 
-kvs::PointObject* BrightnessAdjustment::CreateObject(int argc, char** argv) {
-    kvs::PointObject* obj = NULL;
+kvs::PointObject* BrightnessAdjustment::CreateObject( int argc, char** argv ) {
+    kvs::PointObject* object = NULL;
 
     // Read the first data file (argv[1])
     if ( m_file_format == PLY_ASCII4BA ) {
-        SPBR* spbr_engine          = new SPBR( argv[1], PLY_ASCII );
-        kvs::PointObject* object   = spbr_engine;
-        obj = CreateObjectCommon( argc, argv, spbr_engine, object );
+        SPBR* spbr_engine = new SPBR( argv[1], PLY_ASCII );
+        object = CreateObjectCommon( argc, argv, spbr_engine );
 
     } else if ( m_file_format == PLY_BINARY4BA ) {
-        SPBR* spbr_engine          = new SPBR( argv[1], PLY_BINARY );
-        kvs::PointObject* object   = spbr_engine;
-        obj = CreateObjectCommon( argc, argv, spbr_engine, object );
+        SPBR* spbr_engine = new SPBR( argv[1], PLY_BINARY );
+        object = CreateObjectCommon( argc, argv, spbr_engine );
 
     } else if ( m_file_format == SPBR_BINARY4BA ) {
-        SPBR* spbr_engine          = new SPBR( argv[1], SPBR_BINARY );
-        kvs::PointObject* object   = spbr_engine;
-        obj = CreateObjectCommon( argc, argv, spbr_engine, object );
+        SPBR* spbr_engine = new SPBR( argv[1], SPBR_BINARY );
+        object = CreateObjectCommon( argc, argv, spbr_engine );
 
     } else if ( m_file_format == SPBR_ASCII4BA ) {
-        SPBR* spbr_engine          = new SPBR( argv[1], SPBR_ASCII );
-        kvs::PointObject* object   = spbr_engine;
-        obj = CreateObjectCommon( argc, argv, spbr_engine, object );
-    }
+        SPBR* spbr_engine = new SPBR( argv[1], SPBR_ASCII );
+        object = CreateObjectCommon( argc, argv, spbr_engine );
+    } // end if
 
-    return obj;
+    return object;
 } // End CreateObject()
 
-kvs::PointObject* BrightnessAdjustment::CreateObjectCommon(int argc, char** argv, SPBR* spbr_engine, kvs::PointObject* object) {
+kvs::PointObject* BrightnessAdjustment::CreateObjectCommon( int argc, char** argv, SPBR* spbr_engine ) {
+    kvs::PointObject* object = spbr_engine;
+
     // Read and append the remaining files:  
     //  argv[2], argv[3], ..., argv[argc-1]
-    for (int i = 3; i <= argc; i++) {
-        if ( isASCII_PLY_File(argv[i - 1]) ) {
-            SPBR* spbr_tmp = new SPBR(argv[i - 1], PLY_ASCII);
-            object->add(*kvs::PointObject::DownCast(spbr_tmp));
+    for ( int i = 3; i <= argc; i++ ) {
+        if ( isASCII_PLY_File( argv[i - 1] ) ) {
+            SPBR* spbr_tmp = new SPBR( argv[i - 1], PLY_ASCII );
+            object->add( *kvs::PointObject::DownCast( spbr_tmp ) );
 
-        } else if ( isBINARY_PLY_File(argv[i - 1]) ) {
-            SPBR* spbr_tmp = new SPBR(argv[i - 1], PLY_BINARY);
-            object->add(*kvs::PointObject::DownCast(spbr_tmp));
+        } else if ( isBINARY_PLY_File( argv[i - 1] ) ) {
+            SPBR* spbr_tmp = new SPBR( argv[i - 1], PLY_BINARY );
+            object->add( *kvs::PointObject::DownCast( spbr_tmp ) );
         
-        } else if ( isBinarySPBR_File(argv[i - 1]) ) {
-            SPBR* spbr_tmp = new SPBR(argv[i - 1], SPBR_BINARY);
-            object->add(*kvs::PointObject::DownCast(spbr_tmp));
+        } else if ( isBinarySPBR_File( argv[i - 1] ) ) {
+            SPBR* spbr_tmp = new SPBR( argv[i - 1], SPBR_BINARY );
+            object->add( *kvs::PointObject::DownCast( spbr_tmp ) );
         
         } else {
-            SPBR* spbr_tmp = new SPBR(argv[i - 1], SPBR_ASCII);
-            object->add(*kvs::PointObject::DownCast(spbr_tmp));
-        }
+            SPBR* spbr_tmp = new SPBR( argv[i - 1], SPBR_ASCII );
+            object->add( *kvs::PointObject::DownCast( spbr_tmp ) );
+        } // end if
     } // end for
 
     addBoundingBoxToScene( spbr_engine );
@@ -125,24 +115,28 @@ kvs::PointObject* BrightnessAdjustment::CreateObjectCommon(int argc, char** argv
         Shuffle shuffle_engine( spbr_engine );
     }
 
-    // Set name
-    object->setName("Object");
+    // Set object name
+    object->setName( "Object" );
 
     // Object rotation (Z==>X) if required
     if ( spbr_engine->isZXRotation() ) {
-        double zrot_deg = spbr_engine->objectZXRotAngle (0) ; 
-        double xrot_deg = spbr_engine->objectZXRotAngle (1) ; 
+        double zrot_deg = spbr_engine->objectZXRotAngle(0);
+        double xrot_deg = spbr_engine->objectZXRotAngle(1);
         ToolXform::rotateZX( object, zrot_deg, xrot_deg, kvs::Vector3f( 0, 0, 0 ) );
     }
 
     return object;
 } // End CreateObject()
 
-kvs::glsl::ParticleBasedRenderer* BrightnessAdjustment::CreateRenderer( SPBR* spbr_engine, const size_t LR)
+kvs::glsl::ParticleBasedRenderer* BrightnessAdjustment::CreateRenderer( SPBR* spbr_engine, const size_t repeat_level )
 {
     kvs::glsl::ParticleBasedRenderer* renderer = new kvs::glsl::ParticleBasedRenderer();
+
+    // Set rendere name
     renderer->setName( "Renderer" );
-    renderer->setRepetitionLevel( LR );
+
+    // Set repeat level
+    renderer->setRepetitionLevel( repeat_level );
     
     // Set Lambert shading or keep Phong shading
     setShadingType( spbr_engine, renderer );
@@ -172,10 +166,10 @@ kvs::glsl::ParticleBasedRenderer* BrightnessAdjustment::CreateRenderer( SPBR* sp
     return renderer;
 } // End CreateRenderer()
 
-void BrightnessAdjustment::ReplaceObject( kvs::Scene* scene, int argc, char** argv, SPBR* spbr_engine, const size_t LR )
+void BrightnessAdjustment::ReplaceObject( kvs::Scene* scene, int argc, char** argv, SPBR* spbr_engine, const size_t repeat_level )
 {
-    scene->replaceObject( "Object", CreateObject(argc, argv) );
-    scene->replaceRenderer( "Renderer", CreateRenderer(spbr_engine, LR) );
+    scene->replaceObject( "Object", CreateObject( argc, argv ) );
+    scene->replaceRenderer( "Renderer", CreateRenderer( spbr_engine, repeat_level ) );
 } // End ReplaceObject()
 
 void BrightnessAdjustment::SnapshotImage( kvs::Scene* scene, const std::string filename, const int repeat_level )
@@ -184,19 +178,16 @@ void BrightnessAdjustment::SnapshotImage( kvs::Scene* scene, const std::string f
     scene->screen()->redraw();
     kvs::ColorImage color_image_tmp = scene->camera()->snapshot();
 
-    // Save color image
-    if ( m_snapshot_counter == 0 ) m_img_Color       = color_image_tmp;
-    if ( m_snapshot_counter == 1 ) m_img_Color_LR1   = color_image_tmp;
+    // Save the snapshot image
+    if ( m_snapshot_counter == 0 ) m_color_image     = color_image_tmp;
+    if ( m_snapshot_counter == 1 ) m_color_image_LR1 = color_image_tmp;
 
-    // Write color image
-    // color_image_tmp.write( filename + "_LR" + kvs::String::ToString(repeat_level) + ".bmp" ); // kvs2.7
-    std::ostringstream oss;
-    oss << repeat_level;
-    color_image_tmp.write( filename + "_LR" + oss.str() + ".bmp" );
-    std::cout << "** Snapshot repeat level \"" << repeat_level << "\" image (BMP)" << std::endl;
+    // Write the snapshot image
+    color_image_tmp.write( filename + "_LR" + kvs::String::ToString( repeat_level ) + ".bmp" );
 
+    // Update snapshot counter
     m_snapshot_counter++;
-} // End snapshotTwoImages()
+} // End SnapshotImage()
 
 void BrightnessAdjustment::adjustBrightness( const std::string filename )
 {
@@ -204,14 +195,14 @@ void BrightnessAdjustment::adjustBrightness( const std::string filename )
     displayMessage();
 
     // Calc number of pixels of the image
-    size_t N_all = m_img_Color.numberOfPixels();
-    size_t N_all_non_bgcolor = calcNumOfPixelsNonBGColor( m_img_Color );
+    size_t N_all = m_color_image.numberOfPixels();
+    size_t N_all_non_bgcolor = calcNumOfPixelsNonBGColor( m_color_image );
     std::cout << "** Num. of pixels                    : " << N_all             << " (pixels)" << std::endl;
     std::cout << "** Num. of pixels non BGColor        : " << N_all_non_bgcolor << " (pixels)" << std::endl;
 
     // Convert color to gray
-    kvs::GrayImage img_Gray( m_img_Color );
-    kvs::GrayImage img_Gray_LR1( m_img_Color_LR1 );
+    kvs::GrayImage img_Gray( m_color_image );
+    kvs::GrayImage img_Gray_LR1( m_color_image_LR1 );
 
     // ====================================
     //  STEP1 : Get max pixel value (LR=1)
@@ -222,25 +213,25 @@ void BrightnessAdjustment::adjustBrightness( const std::string filename )
     // =================================================
     //  STEP2 : Search for threshold pixel value (LR=1) 
     // =================================================
-    size_t N_all_non_bgcolor_LR1 = calcNumOfPixelsNonBGColor( m_img_Color_LR1 );
+    size_t N_all_non_bgcolor_LR1 = calcNumOfPixelsNonBGColor( m_color_image_LR1 );
     kvs::UInt8 threshold_pixel_value_LR1 = searchThresholdPixelValue( img_Gray_LR1, N_all_non_bgcolor_LR1, max_pixel_value_LR1 );
 
     // =======================================
     //  STEP3 : Adjust brightness of an image
     // =======================================
-    float p = calcAdjustmentParameter( m_img_Color, threshold_pixel_value_LR1, N_all_non_bgcolor );
+    float p = calcAdjustmentParameter( m_color_image, threshold_pixel_value_LR1, N_all_non_bgcolor );
     p = specifyNumOfDigits( p, 4 );
-    doBrightnessAdjustment( m_img_Color, p );
+    doBrightnessAdjustment( m_color_image, p );
     std::cout << "** Adjustment parameter              : " << std::setprecision(3) << p << std::endl;
 
     // Write adjusted image
     std::ostringstream oss;
     oss << p;
     std::string adjusted_filename(filename + "_adjusted" + oss.str() + ".bmp");
-    m_img_Color.write( adjusted_filename );
-    std::cout << "** Saved adjusted image."                     << std::endl;
-    std::cout << "   (PATH : ./" << adjusted_filename << ")"    << std::endl;
-    std::cout << "================================\n"           << std::endl;
+    m_color_image.write( adjusted_filename );
+    std::cout << "** Saved adjusted image."                      << std::endl;
+    std::cout << "   (PATH : ./" << adjusted_filename << ")"     << std::endl;
+    std::cout << "===========================================\n" << std::endl;
     
     // Exec. open command (macOS only)
 #ifdef OS_MAC
@@ -251,13 +242,12 @@ void BrightnessAdjustment::adjustBrightness( const std::string filename )
 
 } // End adjustBrightness()
 
-inline void BrightnessAdjustment::displayMessage()
+inline void BrightnessAdjustment::displayMessage() const
 {
     std::cout << "\n\n";
-    std::cout << BA_TITLE                 << std::endl;
-    std::cout << "           " << BA_DATE << std::endl;
-    std::cout << "         " << BA_AUTHOR << std::endl;
-    std::cout << "\n";
+    std::cout << BA_TITLE << "\n";
+    std::cout << "                " << BA_DATE << "\n";
+    std::cout << "              " << BA_AUTHOR << "\n\n";
 } // End displayMessage()
 
 int BrightnessAdjustment::calcNumOfPixelsNonBGColor( const kvs::ColorImage& color_image )
@@ -325,7 +315,7 @@ float BrightnessAdjustment::calcAdjustmentParameter( const kvs::ColorImage& colo
     float adjustment_parameter              = 1.0f;
     float tmp_ratio_of_reference_section    = 0.0f;
     
-    std::cout << "\n** Adjusting Brightness of the image...\n" << std::endl;
+    std::cout << "\n** Doing \"Brightness Adjustment\"...\n" << std::endl;
     while ( tmp_ratio_of_reference_section < m_ratio_of_reference_section ) {
         // Update adjustment parameter
         adjustment_parameter += m_parameter_interval;

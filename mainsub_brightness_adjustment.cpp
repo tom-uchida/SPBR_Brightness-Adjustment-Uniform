@@ -33,14 +33,14 @@
 #include <kvs/glut/Timer>
 
 int mainsub_brightness_adjustment(
-    kvs::glut::Application*             app,
-    int                                 argc,
-    char**                              argv,
-    SPBR*                               spbr_engine,
-    kvs::PointObject*                   object,
+    kvs::glut::Application*              app,
+    int                                  argc,
+    char**                               argv,
+    SPBR*                                spbr_engine,
+    kvs::PointObject*                    object,
     BrightnessAdjustment::FILE_FORMAT4BA file_format )
 {
-    // Instantiate class BrightnessAdjustment
+    // Instantiate "BrightnessAdjustment" class
     BrightnessAdjustment* ba = new BrightnessAdjustment( file_format );
 
     // Create screen
@@ -48,7 +48,7 @@ int mainsub_brightness_adjustment(
 
     // Register object and renderer
     unsigned int original_repeat_level = spbr_engine->repeatLevel();
-    ba->RegisterObject( screen.scene(), argc, argv, spbr_engine, original_repeat_level);
+    ba->RegisterObject( screen.scene(), argc, argv, spbr_engine, original_repeat_level );
 
     // Set camera type (orthogonal/perspective) and 
     //   other camera parameters: 
@@ -65,21 +65,21 @@ int mainsub_brightness_adjustment(
     ba->setBackgroundColor( kvs::RGBColor(0, 0, 0) );
 
     // Set window title
-    setWindowTitle ( SPBR_WINDOW_TITLE, argv[1], &screen ) ; 
+    setWindowTitle( SPBR_WINDOW_TITLE, argv[1], &screen ); 
 
     // Add initialize event
     InitializeEvent init;
     screen.addEvent( &init );
 
     // Add keypress event
-    KeyPressEvent   key;
+    KeyPressEvent key;
     screen.addEvent( &key );
 
     // Add timer event
     const int sec = 1;
     const int msec = sec*1000;
     TimerEvent timer_event(
-        /* int                   */  msec,
+        /* const int             */  msec,
         /* BrightnessAdjustment* */  ba, 
         /* int                   */  argc, 
         /* char**                */  argv, 

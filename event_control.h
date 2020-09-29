@@ -50,18 +50,18 @@ const kvs::Vector3f DEFAULT_LIGHT_POSITION (12.0, 12.0, 12.0) ;
 class TimerEvent : public kvs::TimerEventListener {
 //------------------------------------------------------------//
 private:
-    const int 			  m_num_of_snapshots; // LR="original" & LR="1"
+    const int 			  m_num_of_snapshots;
+    BrightnessAdjustment* m_ba;
     int     			  m_argc;
     char**  			  m_argv;
-    size_t  			  m_repeat_level;
-    std::string			  m_filename;
     kvs::Scene* 		  m_scene;
     SPBR*				  m_spbr_engine;
-    BrightnessAdjustment* m_ba;
+    size_t  			  m_repeat_level;
+    std::string			  m_filename;
 
 public:
     // Constructor
-    TimerEvent( int                     msec, 
+    TimerEvent( const int               msec, 
                 BrightnessAdjustment*   ba,
                 int 			        argc,
                 char**			        argv,
@@ -70,40 +70,46 @@ public:
                 const int 				original_repeat_level ) : 
         kvs::TimerEventListener( msec ),
         m_num_of_snapshots( 2 ),
+        m_ba( ba ),
         m_argc( argc ),
         m_argv( argv ),
-        m_repeat_level( original_repeat_level ),
         m_scene( scene ),
         m_spbr_engine( spbr_engine ),
-        m_ba( ba )
+        m_repeat_level( original_repeat_level )
     {
         // Get filename for snapshots
-        SingleInputFile* m_sif = SingleInputFile::GetInstance();
+        SingleInputFile* sif_tmp = SingleInputFile::GetInstance();
         char m_filename_tmp[256];
-        m_sif->GetNameBody( m_filename_tmp );
+        sif_tmp->GetNameBody( m_filename_tmp );
         m_filename = m_filename_tmp;
     } // End constroctor
 
-    void update( kvs::TimeEvent* event ) {
+    void update( kvs::TimeEvent* event )
+    {
         if ( m_ba->getSnapshotCounter() < m_num_of_snapshots ) {
+            // Save and Write the snapshot image
             m_ba->SnapshotImage( m_scene, m_filename, m_repeat_level );
+            std::cout << "*** Snapshot repeat level \"" << m_repeat_level << "\" image." << std::endl;
 
             if ( m_ba->getSnapshotCounter() == 1 ) {
+                // Set the repeat level to "1" and redraw
+                std::cout << "*** Forcibly, set the repeat level to \"1\".\n" << std::endl;
                 m_repeat_level = 1;
-                std::cout << "** Forcibly, repeat level is set to \"1\".\n" << std::endl;
-                m_ba->ReplaceObject( m_scene, m_argc, m_argv, m_spbr_engine, m_repeat_level);
-                std::cout << "\n** Replaced object and renderer." << std::endl;
+                m_ba->ReplaceObject( m_scene, m_argc, m_argv, m_spbr_engine, m_repeat_level );
+                std::cout << "\n*** Replaced object and renderer successfully." << std::endl;
 
             } else if ( m_ba->getSnapshotCounter() == 2 ) {
-                std::cout << "\n** Snapshot succeeded."       << std::endl;
-                std::cout << "** SPBR ended successfully."  << std::endl;
+                std::cout << "*** SPBR ended successfully." << std::endl;
+
+                // Do "Brightness Adjustment"
+                m_ba->adjustBrightness( m_filename );
             } // end if
 
         } else {
-            m_ba->adjustBrightness( m_filename );
             exit(0);
         } // end if
     } // End update()
+
 }; // End TimerEvent class
 
 //------------------------------------------------------------//
