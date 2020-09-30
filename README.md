@@ -8,8 +8,8 @@
 `#/BrightnessAdjustment 1 or 0 (default: 0)`
 
 ## Usage
-`$ spbr_ex input.spbr`
+`$ spbr_ba input.spbr`
 
 or
 
-`$ spbr_ex input.ply`
+`$ spbr_ba input.ply`

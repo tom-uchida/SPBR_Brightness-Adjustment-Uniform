@@ -35,26 +35,26 @@ private:
 
     // Functions to adjust brightness of an image
 public:
-    void        adjustBrightness( const std::string filename );
+    void        AdjustBrightness( const std::string filename );
     void        setBackgroundColor( const kvs::RGBColor bgcolor ) { m_bgcolor = bgcolor; };
 private:
     void        displayMessage() const;
-    int         calcNumOfPixelsNonBGColor( const kvs::ColorImage& image );
-    kvs::UInt8  calcMaxPixelValue( const kvs::GrayImage& image );
-    kvs::UInt8  searchThresholdPixelValue( const kvs::GrayImage& gray_image, const size_t N_all_non_bgcolor_LR1, const kvs::UInt8 max_pixel_value_LR1 );
-    float       calcAdjustmentParameter( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t N_all_non_bgcolor );
-    float       tempolarilyAdjustBrightness( const kvs::ColorImage& color_image, const float p, const kvs::UInt8 threshold_pixel_value_LR1, const size_t N_all_non_bgcolor );
-    kvs::ColorImage deepCopyColorImage( const kvs::ColorImage& other );
-    float       specifyNumOfDigits( const float p, const float digits );
-    void        doBrightnessAdjustment( kvs::ColorImage& color_image, const float p );
+    int         calcNumberOfPixelsNonBGColor( const kvs::ColorImage& image ) const;
+    kvs::UInt8  calcMaxPixelValue( const kvs::GrayImage& image ) const;
+    kvs::UInt8  searchThresholdPixelValue( const kvs::GrayImage& gray_image, const size_t npixels_non_bgcolor_LR1, const kvs::UInt8 max_pixel_value_LR1 ) const;
+    float       calcAdjustmentParameter( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor );
+    float       calcRatioTempolarily( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor );
+    kvs::ColorImage deepCopyColorImage( const kvs::ColorImage& other ) const;
+    float       specifyNumberOfDigits( const float p, const float digits ) const;
+    void        doBrightnessAdjustment( kvs::ColorImage& color_image, const float p ) const;
     
     //---------- DATA ----------//
     const FILE_FORMAT4BA    m_file_format;
     size_t                  m_snapshot_counter;
     kvs::RGBColor           m_bgcolor;
     kvs::ColorImage         m_color_image, m_color_image_LR1;
-    const float             m_ratio_of_reference_section;
-    const float             m_parameter_interval;
+    // const float             m_ratio_of_reference_section;
+    // const float             m_parameter_interval;
 };
 
 #endif // end of brightness_adjustment.h

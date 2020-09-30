@@ -102,7 +102,7 @@ public:
                 std::cout << "*** SPBR ended successfully." << std::endl;
 
                 // Do "Brightness Adjustment"
-                m_ba->adjustBrightness( m_filename );
+                m_ba->AdjustBrightness( m_filename );
             } // end if
 
         } else {
