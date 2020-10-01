@@ -87,19 +87,19 @@ public:
     void update( kvs::TimeEvent* event )
     {
         if ( m_ba->getSnapshotCounter() < m_num_of_snapshots ) {
-            // Save and Write the snapshot image
             m_ba->SnapshotImage( m_scene, m_filename, m_repeat_level );
             std::cout << "*** Snapshot repeat level \"" << m_repeat_level << "\" image." << std::endl;
 
             if ( m_ba->getSnapshotCounter() == 1 ) {
-                // Set the repeat level to "1" and redraw
-                std::cout << "*** Forcibly, set the repeat level to \"1\".\n" << std::endl;
+                // Set the repeat level to "1" and SPBR again
+                std::cout   << "*** Forcibly, set the repeat level to \"1\""
+                            << " and SPBR is running again...\n" << std::endl;
                 m_repeat_level = 1;
                 m_ba->ReplaceObject( m_scene, m_argc, m_argv, m_spbr_engine, m_repeat_level );
-                std::cout << "\n*** Replaced object and renderer successfully." << std::endl;
+                std::cout   << "\n*** Replaced object and renderer successfully." << std::endl;
 
             } else if ( m_ba->getSnapshotCounter() == 2 ) {
-                std::cout << "*** SPBR ended successfully." << std::endl;
+                std::cout   << "*** SPBR ended successfully." << std::endl;
 
                 // Do "Brightness Adjustment"
                 m_ba->AdjustBrightness( m_filename );

@@ -7,8 +7,6 @@
 #if !defined  BRIGHTNESS_ADJUSTMENT_H
 #define       BRIGHTNESS_ADJUSTMENT_H
 
-#include "spbr.h"
-
 class BrightnessAdjustment {
 public:
     enum FILE_FORMAT4BA
@@ -43,18 +41,19 @@ private:
     kvs::UInt8  calcMaxPixelValue( const kvs::GrayImage& image ) const;
     kvs::UInt8  searchThresholdPixelValue( const kvs::GrayImage& gray_image, const size_t npixels_non_bgcolor_LR1, const kvs::UInt8 max_pixel_value_LR1 ) const;
     float       calcAdjustmentParameter( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor );
-    float       calcRatioTempolarily( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor );
+    float       calcTemporaryPercent( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor );
     kvs::ColorImage deepCopyColorImage( const kvs::ColorImage& other ) const;
     float       specifyNumberOfDigits( const float p, const float digits ) const;
     void        doBrightnessAdjustment( kvs::ColorImage& color_image, const float p ) const;
+    float       calcFinalPercent( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor ) const;
+    void        writeAdjustedImage( const std::string filename , const kvs::ColorImage& color_image, const float p_final ) const;
+    void        execOpenCommand( const std::string filename ) const;
     
     //---------- DATA ----------//
     const FILE_FORMAT4BA    m_file_format;
     size_t                  m_snapshot_counter;
     kvs::RGBColor           m_bgcolor;
     kvs::ColorImage         m_color_image, m_color_image_LR1;
-    // const float             m_ratio_of_reference_section;
-    // const float             m_parameter_interval;
 };
 
 #endif // end of brightness_adjustment.h

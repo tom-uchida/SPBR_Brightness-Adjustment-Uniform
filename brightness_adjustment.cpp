@@ -35,14 +35,14 @@
 #include "version.h"
 #include <sstream>
 
-const float RATIO_IN_REFERENCE_SECTION = 0.01f;
+#include <time.h>
+
+const float PERCENT_IN_REFERENCE_SECTION = 0.01f;
 const float PARAMETER_INTERVAL = 0.01f;
 
 BrightnessAdjustment::BrightnessAdjustment( FILE_FORMAT4BA file_format ):
     m_file_format( file_format ),
     m_snapshot_counter( 0 )
-    // m_ratio_of_reference_section( 0.01f ),
-    // m_parameter_interval( 0.01f )
 {
     // Message
     std::cout << "\n*** BrightnessAdjustment constructor is called." << std::endl;
@@ -186,7 +186,7 @@ void BrightnessAdjustment::SnapshotImage( kvs::Scene* scene, const std::string f
     if ( m_snapshot_counter == 1 ) m_color_image_LR1 = color_image_tmp;
 
     // Write the snapshot image
-    color_image_tmp.write( filename + "_LR" + kvs::String::ToString( repeat_level ) + ".bmp" );
+    // color_image_tmp.write( filename + "_LR" + kvs::String::ToString( repeat_level ) + ".bmp" );
 
     // Update snapshot counter
     m_snapshot_counter++;
@@ -206,12 +206,17 @@ void BrightnessAdjustment::AdjustBrightness( const std::string filename )
                 << npixels_non_bgcolor << " (pixels)" << std::endl;
 
     // Convert color to gray
+    const kvs::GrayImage gray_image( m_color_image );
     const kvs::GrayImage gray_image_LR1( m_color_image_LR1 );
 
     // ===================================
     //  STEP1: Get max pixel value (LR=1)
     // ===================================
+    const clock_t start = clock();
+    const kvs::UInt8 max_pixel_value     = calcMaxPixelValue( gray_image );
     const kvs::UInt8 max_pixel_value_LR1 = calcMaxPixelValue( gray_image_LR1 );
+    std::cout   << "*** Max pixel value                   : " 
+                << +max_pixel_value << " (pixel value)"     << std::endl;
     std::cout   << "*** Max pixel value (LR=1)            : " 
                 << +max_pixel_value_LR1 << " (pixel value)" << std::endl;
 
@@ -224,28 +229,25 @@ void BrightnessAdjustment::AdjustBrightness( const std::string filename )
     // =======================================
     //  STEP3: Adjust brightness of the image
     // =======================================
-    std::cout << "\n*** Doing \"Brightness Adjustment\"...\n" << std::endl;
+    std::cout   << "\n*** Doing \"Brightness Adjustment\"..." << std::endl;
     float p = calcAdjustmentParameter( m_color_image, threshold_pixel_value_LR1, npixels_non_bgcolor );
     p = specifyNumberOfDigits( p, 4 );
     doBrightnessAdjustment( m_color_image, p );
+
+    const clock_t end = clock();
+    std::cout   << "*** Done! ( " 
+                << static_cast<double>( end - start ) / CLOCKS_PER_SEC << " [sec] )\n" << std::endl;
+
     std::cout   << "*** Adjustment parameter              : " 
                 << std::setprecision(3) << p << std::endl;
 
+    const float percent_final = calcFinalPercent( m_color_image, threshold_pixel_value_LR1, npixels_non_bgcolor );
+    std::cout   << "*** Percent in reference section      : " 
+                << std::setprecision(3) << percent_final*100 << "(%) ( " 
+                << +threshold_pixel_value_LR1 << " ~ " << +max_pixel_value_LR1 << " (pixel value) )" << std::endl;
+
     // Write adjusted image
-    std::ostringstream oss;
-    oss << p*100;
-    std::string adjusted_image_filename( filename + "_adjusted" + oss.str() + ".bmp" );
-    m_color_image.write( adjusted_image_filename );
-    std::cout << "*** Saved adjusted image."                     << std::endl;
-    std::cout << "    (PATH: " << adjusted_image_filename << ")" << std::endl;
-    std::cout << "===========================================\n" << std::endl;
-    
-    // Exec. open command (macOS only)
-#ifdef OS_MAC
-    std::string EXEC( "open " );
-    EXEC += adjusted_image_filename;
-    system( EXEC.c_str() );
-#endif
+    writeAdjustedImage( filename, m_color_image, p );
 
 } // End AdjustBrightness()
 
@@ -275,12 +277,10 @@ kvs::UInt8 BrightnessAdjustment::calcMaxPixelValue( const kvs::GrayImage& gray_i
 {
     kvs::UInt8 max_pixel_value = 0;
 
-    for ( size_t j = 0; j < gray_image.height(); j++ ) {
-        for ( size_t i = 0; i < gray_image.width(); i++ ) {
+    for ( size_t j = 0; j < gray_image.height(); j++ )
+        for ( size_t i = 0; i < gray_image.width(); i++ )
             if ( gray_image.pixel( i, j ) > max_pixel_value ) 
                 max_pixel_value = gray_image.pixel( i, j );
-        }
-    }
 
     return max_pixel_value;
 } // End calcMaxPixelValue()
@@ -288,19 +288,17 @@ kvs::UInt8 BrightnessAdjustment::calcMaxPixelValue( const kvs::GrayImage& gray_i
 kvs::UInt8 BrightnessAdjustment::searchThresholdPixelValue( const kvs::GrayImage& gray_image, const size_t npixels_non_bgcolor_LR1, const kvs::UInt8 max_pixel_value_LR1 ) const
 {
     kvs::UInt8 threshold_pixel_value_LR1 = max_pixel_value_LR1;
-    float ratio_tmp = 0.0f;
+    float percent_tmp = 0.0f;
 
     // Search for threshold pixel value
-    while ( ratio_tmp < RATIO_IN_REFERENCE_SECTION ) {
+    while ( percent_tmp < PERCENT_IN_REFERENCE_SECTION ) {
         int counter = 0;
-        for ( size_t j = 0; j < gray_image.height(); j++ ) {
-            for ( size_t i = 0; i < gray_image.width(); i++ ) {
+        for ( size_t j = 0; j < gray_image.height(); j++ )
+            for ( size_t i = 0; i < gray_image.width(); i++ )
                 if ( gray_image.pixel( i, j ) >= threshold_pixel_value_LR1 ) 
                     counter++;
-            }
-        }
 
-        ratio_tmp = float( counter ) / float( npixels_non_bgcolor_LR1 );
+        percent_tmp = float( counter ) / float( npixels_non_bgcolor_LR1 );
         
         // Next pixel value
         threshold_pixel_value_LR1--;
@@ -309,8 +307,8 @@ kvs::UInt8 BrightnessAdjustment::searchThresholdPixelValue( const kvs::GrayImage
 
     std::cout   << "*** Threshold pixel value (LR=1)      : " 
                 << +threshold_pixel_value_LR1 << " (pixel value)" << std::endl;
-    std::cout   << "*** Ratio in reference section (LR=1) : " 
-                << std::setprecision(3) << ratio_tmp*100 << "(%) ( " 
+    std::cout   << "*** Percent in ref. section (LR=1)    : " 
+                << std::setprecision(3) << percent_tmp*100 << "(%) ( " 
                 << +threshold_pixel_value_LR1 << " ~ " << +max_pixel_value_LR1 << " (pixel value) )" << std::endl;
 
     return threshold_pixel_value_LR1;
@@ -319,24 +317,24 @@ kvs::UInt8 BrightnessAdjustment::searchThresholdPixelValue( const kvs::GrayImage
 float BrightnessAdjustment::calcAdjustmentParameter( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor )
 {
     float adjustment_parameter = 1.0f;
-    float ratio_tmp = 0.0f;
+    float percent_tmp = 0.0f;
     
-    while ( ratio_tmp < RATIO_IN_REFERENCE_SECTION ) {
+    while ( percent_tmp < PERCENT_IN_REFERENCE_SECTION ) {
         // Update adjustment parameter
         adjustment_parameter += PARAMETER_INTERVAL;
 
-        ratio_tmp = calcRatioTempolarily(
+        percent_tmp = calcTemporaryPercent(
             /* kvs::ColorImage  */ color_image, 
             /* const float      */ adjustment_parameter, 
             /* const kvs::UInt8 */ threshold_pixel_value_LR1, 
             /* const size_t     */ npixels_non_bgcolor );
     } // end while
+    adjustment_parameter -= PARAMETER_INTERVAL;
 
-    // return adjustment_parameter -= m_parameter_interval;
     return adjustment_parameter;
 } // End calcAdjustmentParameter()
 
-inline float BrightnessAdjustment::calcRatioTempolarily( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor )
+inline float BrightnessAdjustment::calcTemporaryPercent( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor )
 {
     kvs::ColorImage color_image_tmp = deepCopyColorImage( color_image );
     doBrightnessAdjustment( color_image_tmp, p_current );
@@ -350,9 +348,9 @@ inline float BrightnessAdjustment::calcRatioTempolarily( const kvs::ColorImage& 
             if ( gray_image_tmp.pixel( i, j ) >= threshold_pixel_value_LR1 ) 
                 counter++;
 
-    const float ratio_tmp = float( counter ) / float( npixels_non_bgcolor );
-    return ratio_tmp;
-} // End calcRatioTempolarily()
+    const float percent_tmp = float( counter ) / float( npixels_non_bgcolor );
+    return percent_tmp;
+} // End calcTemporaryPercent()
 
 inline kvs::ColorImage BrightnessAdjustment::deepCopyColorImage( const kvs::ColorImage& other ) const
 {
@@ -376,8 +374,8 @@ inline float BrightnessAdjustment::specifyNumberOfDigits( const float p, const f
 
 inline void BrightnessAdjustment::doBrightnessAdjustment( kvs::ColorImage& color_image, const float p ) const
 {
-    kvs::RGBColor   pixel;
-    kvs::UInt8      r, g, b;
+    kvs::RGBColor pixel;
+    kvs::UInt8    r, g, b;
 
     for ( size_t j = 0; j < color_image.height(); j++ ) {
         for ( size_t i = 0; i < color_image.width(); i++ ) {
@@ -399,3 +397,42 @@ inline void BrightnessAdjustment::doBrightnessAdjustment( kvs::ColorImage& color
         } // end for
     } // end for
 } // End doBrightnessAdjustment()
+
+inline float BrightnessAdjustment::calcFinalPercent( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor ) const
+{
+    // Convert color to gray
+    const kvs::GrayImage gray_image_tmp( color_image );
+
+    int counter = 0;
+    for ( size_t j = 0; j < gray_image_tmp.height(); j++ )
+        for ( size_t i = 0; i < gray_image_tmp.width(); i++ )
+            if ( gray_image_tmp.pixel( i, j ) >= threshold_pixel_value_LR1 ) 
+                counter++;
+
+    const float percent_final = float( counter ) / float( npixels_non_bgcolor );
+    return percent_final;
+} // End calcFinalPercent()
+
+inline void BrightnessAdjustment::writeAdjustedImage( const std::string filename , const kvs::ColorImage& color_image, const float p_final ) const
+{
+    std::ostringstream oss;
+    oss << p_final*100;
+    std::string adjusted_image_filename( filename + "_adjusted" + oss.str() + ".bmp" );
+    color_image.write( adjusted_image_filename );
+
+    std::cout << "\n*** Saved adjusted image."                   << std::endl;
+    std::cout << "    (PATH: " << adjusted_image_filename << ")" << std::endl;
+    std::cout << "===========================================\n" << std::endl;
+
+    // Exec. open command (macOS only)
+#ifdef OS_MAC
+    execOpenCommand( adjusted_image_filename );
+#endif
+} // End writeAdjustedImage()
+
+inline void BrightnessAdjustment::execOpenCommand( const std::string filename ) const
+{
+    std::string EXEC( "open " );
+    EXEC += filename;
+    system( EXEC.c_str() );
+} // End execOpenCommand()
