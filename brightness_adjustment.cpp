@@ -334,7 +334,7 @@ float BrightnessAdjustment::calcAdjustmentParameter( const kvs::ColorImage& colo
     return adjustment_parameter;
 } // End calcAdjustmentParameter()
 
-inline float BrightnessAdjustment::calcTemporaryPercent( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor )
+float BrightnessAdjustment::calcTemporaryPercent( const kvs::ColorImage& color_image, const float p_current, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor )
 {
     kvs::ColorImage color_image_tmp = deepCopyColorImage( color_image );
     doBrightnessAdjustment( color_image_tmp, p_current );
@@ -352,7 +352,7 @@ inline float BrightnessAdjustment::calcTemporaryPercent( const kvs::ColorImage& 
     return percent_tmp;
 } // End calcTemporaryPercent()
 
-inline kvs::ColorImage BrightnessAdjustment::deepCopyColorImage( const kvs::ColorImage& other ) const
+kvs::ColorImage BrightnessAdjustment::deepCopyColorImage( const kvs::ColorImage& other ) const
 {
     kvs::ColorImage duplicated_color_image( other.width(), other.height() );
 
@@ -372,7 +372,7 @@ inline float BrightnessAdjustment::specifyNumberOfDigits( const float p, const f
     return stof( p_str.substr( 0, digits ) );
 } // End specifyNumberOfDigits()
 
-inline void BrightnessAdjustment::doBrightnessAdjustment( kvs::ColorImage& color_image, const float p ) const
+void BrightnessAdjustment::doBrightnessAdjustment( kvs::ColorImage& color_image, const float p ) const
 {
     kvs::RGBColor pixel;
     kvs::UInt8    r, g, b;
@@ -398,7 +398,7 @@ inline void BrightnessAdjustment::doBrightnessAdjustment( kvs::ColorImage& color
     } // end for
 } // End doBrightnessAdjustment()
 
-inline float BrightnessAdjustment::calcFinalPercent( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor ) const
+float BrightnessAdjustment::calcFinalPercent( const kvs::ColorImage& color_image, const kvs::UInt8 threshold_pixel_value_LR1, const size_t npixels_non_bgcolor ) const
 {
     // Convert color to gray
     const kvs::GrayImage gray_image_tmp( color_image );

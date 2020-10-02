@@ -47,7 +47,7 @@ int mainsub_brightness_adjustment(
     kvs::glut::Screen screen( app );
 
     // Register object and renderer
-    unsigned int original_repeat_level = spbr_engine->repeatLevel();
+    const unsigned int original_repeat_level = spbr_engine->repeatLevel();
     ba->RegisterObject( screen.scene(), argc, argv, spbr_engine, original_repeat_level );
 
     // Set camera type (orthogonal/perspective) and 
@@ -56,13 +56,13 @@ int mainsub_brightness_adjustment(
     setCameraParameters( spbr_engine, &screen ); 
 
     // Set image resolution to the screen
-    unsigned int img_resoln = spbr_engine->imageResolution();
+    const unsigned int img_resoln = spbr_engine->imageResolution();
     screen.setGeometry( 0, 0, img_resoln, img_resoln );
 
     // Forcibly, set background color "Black"
     screen.setBackgroundColor( kvs::RGBColor(0, 0, 0) );
-    std::cout << "** Forcibly, background color is set to \"black\"." << std::endl;
-    ba->setBackgroundColor( kvs::RGBColor(0, 0, 0) );
+    std::cout << "*** Forcibly, background color is set to \"black\"." << std::endl;
+    // ba->setBackgroundColor( kvs::RGBColor(0, 0, 0) );
 
     // Set window title
     setWindowTitle( SPBR_WINDOW_TITLE, argv[1], &screen ); 
@@ -76,8 +76,7 @@ int mainsub_brightness_adjustment(
     screen.addEvent( &key );
 
     // Add timer event
-    const int sec = 1;
-    const int msec = sec*1000;
+    const int msec = 1000;
     TimerEvent timer_event(
         /* const int             */  msec,
         /* BrightnessAdjustment* */  ba, 
