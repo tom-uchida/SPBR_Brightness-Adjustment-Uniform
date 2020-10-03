@@ -256,7 +256,7 @@ inline void BrightnessAdjustment::displayMessage() const
     std::cout << "\n\n";
     std::cout << BA_TITLE << "\n";
     std::cout << "                " << BA_DATE << "\n";
-    std::cout << "              " << BA_AUTHOR << "\n\n";
+    std::cout << "             " << BA_AUTHOR << "\n\n";
 } // End displayMessage()
 
 int BrightnessAdjustment::calcNumberOfPixelsNonBGColor( const kvs::ColorImage& color_image ) const
