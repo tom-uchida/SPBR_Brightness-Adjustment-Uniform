@@ -60,7 +60,8 @@ SPBR::SPBR( const char* input_file, SPBR_BINARY_FORMAT file_format )  :
     m_unirand(),
     m_mouse_rot_speed(1.0) , //ROTSPEED
     m_mouse_zoom_speed(1.0), //ZOOMSPEED
-    m_num_output_ply_column(0)
+    m_num_output_ply_column(0),
+    m_flagBrightnessAdjustment(false) // UCHIDA 2020/10/03
 {
   //---- Message
   //  std::cout << "** " << message_string << std::endl; 

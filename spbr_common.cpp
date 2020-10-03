@@ -612,8 +612,7 @@ void SPBR::setMouseZoomSpeed ( double mouse_zoom_speed ) //ZOOMSPEED
 
 // UCHIDA 2020/09/29
 //-----
-void
-SPBR::setFlagBrightnessAdjustment( int flag ) {
+void SPBR::setFlagBrightnessAdjustment( int flag ) {
   if ( flag ) { 
     m_flagBrightnessAdjustment = true;  
     std::cout << "** Adjust brightness of the image." << std::endl;

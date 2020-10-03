@@ -42,7 +42,6 @@ class SPBR  : public kvs::PointObject {
   // UCHIDA 2020/09/29
   // Brightness Adjustment
   void   setFlagBrightnessAdjustment( int flag );
-  bool   m_flagBrightnessAdjustment;
   bool   isBrightnessAdjustment ( void ) { return m_flagBrightnessAdjustment ;}
 
   // Camera control
@@ -344,9 +343,12 @@ class SPBR  : public kvs::PointObject {
  /*private:
 	 unsigned int m_num_output_ply_column;*/
 
+
+// UCHIDA 2020/10/03
+//---- For Brightness Adjustment
+private:
+    bool m_flagBrightnessAdjustment;
+
 };
 
 #endif // end of spbr.h
-
-
-
