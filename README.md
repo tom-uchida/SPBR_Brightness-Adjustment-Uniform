@@ -1,5 +1,13 @@
 # SPBR_Brightness-Adjustment
 
+## Demo
+<img src="figures/demo.gif">
+
+## Results
+|Original Image|Adjusted Image|
+|:-:|:-:|
+|<img src="figures/original.bmp">|<img src="figures/adjusted249.bmp">|
+
 ## Prerequisites
 - KVS: 2.9.0
 - SPBR: beta-19a
@@ -8,8 +16,6 @@
 `#/BrightnessAdjustment 1 or 0 (default: 0)`
 
 ## Usage
-`$ spbr_ba input.spbr`
-
+`$ spbr input.spbr `
 or
-
-`$ spbr_ba input.ply`
+`$ spbr input.ply`
