@@ -136,7 +136,7 @@ kvs::glsl::ParticleBasedRenderer* BrightnessAdjustment::CreateRenderer( SPBR* sp
 {
     kvs::glsl::ParticleBasedRenderer* renderer = new kvs::glsl::ParticleBasedRenderer();
 
-    // Set rendere name
+    // Set renderer name
     renderer->setName( "Renderer" );
 
     // Set repeat level
