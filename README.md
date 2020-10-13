@@ -10,12 +10,14 @@
 
 ## Prerequisites
 - KVS: 2.9.0
-- SPBR: beta-19a
+- SPBR2020: 001a-3
 
 ## New Command
 `#/BrightnessAdjustment 1 or 0 (default: 0)`
 
 ## Usage
 `$ spbr input.spbr `
+
 or
+
 `$ spbr input.ply`
