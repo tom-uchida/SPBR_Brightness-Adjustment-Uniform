@@ -207,7 +207,7 @@ int mainsub_spbr_spbrbin ( int argc, char** argv )
 
   // Draw FPS count inside the view window
   //  Revise and moved here to use kvs::Label
-//   drawFPS ( spbr_engine, &screen );//draw FPSLabel
+  drawFPS ( spbr_engine, &screen );//draw FPSLabel
 
   // Start
   return( app.run() );

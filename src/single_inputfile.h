@@ -7,6 +7,7 @@
 #define       INPUT_FILE_HH
 
 #include <cstring>
+#include "os_select.h"
 
 //---------------//
 class SingleInputFile{
@@ -86,8 +87,17 @@ void SingleInputFile::SetName( const char* filename )
 inline 
 void SingleInputFile::GetNameBody ( char body[] )
 {
+  // local const
+#if defined OS_WIN
+  const char SEPARATOR = '\';
+#else
+  const char SEPARATOR = '/';
+#endif
+
+
   for ( int i = 0; i < m_name_length; i++ ) {
-    if( m_name[i] == '.' ) { 
+    //    if( m_name[i] == '.' ) { 
+    if( m_name[i] == '.' && m_name[i+1] != SEPARATOR ) { //TANAKA
       body[i] = '\0';
       break; 
     }
@@ -108,9 +118,17 @@ bool SingleInputFile::GetNameExt ( char body[] )
   char* p ;
   bool flag_found = false ;
 
+  // local const
+#if defined OS_WIN
+  const char SEPARATOR = '\';
+#else
+  const char SEPARATOR = '/';
+#endif
+
   // Calc
   for ( p = m_name; p != NULL ; p++ ) {
-    if( *p == '.' ) { 
+    //    if( *p == '.' ) { 
+    if( *p == '.' && *(p+1) != SEPARATOR ) { //TANAKA
       flag_found = true ;
       p++ ;  // go to the head of ext
       break; 

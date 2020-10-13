@@ -136,7 +136,7 @@ kvs::glsl::ParticleBasedRenderer* BrightnessAdjustment::CreateRenderer( SPBR* sp
 {
     kvs::glsl::ParticleBasedRenderer* renderer = new kvs::glsl::ParticleBasedRenderer();
 
-    // Set renderer name
+    // Set rendere name
     renderer->setName( "Renderer" );
 
     // Set repeat level
@@ -230,7 +230,7 @@ void BrightnessAdjustment::AdjustBrightness( const std::string filename )
     // =======================================
     //  STEP3: Adjust brightness of the image
     // =======================================
-    std::cout   << "\n*** Doing \"Brightness Adjustment\"..." << std::endl;
+    std::cout   << "\n*** Executing \"Brightness Adjustment\"..." << std::endl;
     float p = calcAdjustmentParameter( m_color_image, threshold_pixel_value_LR1, npixels_non_bgcolor );
     p = specifyNumberOfDigits( p, 4 );
     doBrightnessAdjustment( m_color_image, p );
@@ -256,9 +256,18 @@ inline void BrightnessAdjustment::displayMessage() const
 {
     std::cout << "\n\n";
     std::cout << BA_TITLE << "\n";
+    std::cout << std::endl;
+} // End displayMessage()
+
+/***
+inline void BrightnessAdjustment::displayMessage() const
+{
+    std::cout << "\n\n";
+    std::cout << BA_TITLE << "\n";
     std::cout << "                " << BA_DATE << "\n";
     std::cout << "             " << BA_AUTHOR << "\n\n";
 } // End displayMessage()
+***/
 
 int BrightnessAdjustment::calcNumberOfPixelsNonBGColor( const kvs::ColorImage& color_image ) const
 {
@@ -421,8 +430,8 @@ inline void BrightnessAdjustment::writeAdjustedImage( const std::string filename
     std::string adjusted_image_filename( filename + "_adjusted" + oss.str() + ".bmp" );
     color_image.write( adjusted_image_filename );
 
-    std::cout << "\n*** Saved adjusted image."                   << std::endl;
-    std::cout << "    (PATH: " << adjusted_image_filename << ")" << std::endl;
+    std::cout << "\n*** The adjusted image is saved as a BITMAP file."   << std::endl;
+    std::cout << "    PATH: " << adjusted_image_filename << std::endl;
     std::cout << "===========================================\n" << std::endl;
 
     // Exec. open command (macOS only)

@@ -89,7 +89,10 @@ inline void setShadingType ( SPBR*                              spbr_engine,
   // Set Lambert shading
   if( spbr_engine->isLambertShading() ) {
     double ka = spbr_engine->ka(), kd = spbr_engine->kd();
-    renderer->setShader ( kvs::Shader::Lambert( ka, kd ) );
+
+    //    renderer->setShader ( kvs::Shader::Lambert( ka, kd ) );
+    renderer->setShadingModel( kvs::Shader::Lambert( ka, kd ) ); // TANAKA 2020-001a
+
     out << "** Lambert Shading: ";
     out << "kd = " << kd << ", ";
     out << "ka = " << ka << std::endl;
@@ -98,7 +101,10 @@ inline void setShadingType ( SPBR*                              spbr_engine,
     double ka = spbr_engine->ka(), kd = spbr_engine->kd();
     double ks = spbr_engine->ks();
     int    shininess = spbr_engine->shininess();
-    renderer->setShader ( kvs::Shader::Phong( ka, kd, ks, (float)shininess ) );
+
+    //    renderer->setShader ( kvs::Shader::Phong( ka, kd, ks, (float)shininess ) );
+    renderer->setShadingModel ( kvs::Shader::Phong( ka, kd, ks, (float)shininess ) );
+
     out << "kd = " << kd << ", ";
     out << "ka = " << ka << ", ";
     out << "ks = " << ks << ", ";

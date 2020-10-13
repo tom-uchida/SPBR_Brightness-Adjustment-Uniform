@@ -98,7 +98,7 @@ inline void displaySPBRCommands ( std::ostream& out )
     out << "     * This command is incompatible with #/WireframBox" << std::endl;
 
     out << "  #/ViewAngle angle_deg (default: 45.0)" << std::endl;
-    out << "  #/WireframeBox xmin ymin zmin xmax ymax zmax" << std::endl;
+    out << "  #/WireframeBox xmin ymin zmin xmax ymax zmax (unsupported in SPBR 2020-001a)" << std::endl;
     out << "     * z=zmin: red, z=zmax: blue, z-parallel: green" << std::endl; 
     out << "  #/WritePLY_ASCII num_ply_column" << std::endl; 
     out << "     * Output ASCII PLY-format file" << std::endl; 
